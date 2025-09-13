@@ -1,0 +1,21 @@
+{
+  "name": "mizupass-backend",
+  "version": "1.0.0",
+  "description": "MizuPass backend API using Hono and ZKPassport SDK",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "bun run --watch src/index.ts",
+    "build": "bun build src/index.ts --outdir=dist --target=bun",
+    "start": "bun run dist/index.js",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@zkpassport/sdk": "0.8.3",
+    "hono": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.0.0",
+    "typescript": "^5.0.0"
+  },
+  "type": "module"
+}
