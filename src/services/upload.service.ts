@@ -33,7 +33,7 @@ export const uploadJsonToIPFS = async (jsonData: JsonBody): Promise<UploadResult
     const ticketMetadata = {
       name: `${jsonData.name} - MizuPass Ticket`,
       description: `${jsonData.description} - MizuPass Ticket`,
-      image: "bafybeifkarbtly5agll2baru4ej7q2fe2hwhwkugu6pk2qihchtzrnlbxy",
+      image: "https://gateway.pinata.cloud/ipfs/bafybeifkarbtly5agll2baru4ej7q2fe2hwhwkugu6pk2qihchtzrnlbxy",
       external_url: `https://gateway.pinata.cloud/ipfs/bafybeifkarbtly5agll2baru4ej7q2fe2hwhwkugu6pk2qihchtzrnlbxy`
     };
 
