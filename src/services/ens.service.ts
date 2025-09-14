@@ -76,12 +76,12 @@ export const createSubEns = async (
 ) => {
   try {
     // Check if user is verified before allowing subdomain creation
-    // const verified = await isVerifiedUser(givenSubdomainAddress);
-    // if (!verified) {
-    //   throw new Error(
-    //     `User ${givenSubdomainAddress} is not verified. Only verified users can create sub-ENS domains.`
-    //   );
-    // }
+    const verified = await isVerifiedUser(givenSubdomainAddress);
+    if (!verified) {
+      throw new Error(
+        `User ${givenSubdomainAddress} is not verified. Only verified users can create sub-ENS domains.`
+      );
+    }
 
     const subDomainaddressOwner = await getENS(subdomainName);
     if (subDomainaddressOwner) {
