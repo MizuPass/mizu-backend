@@ -35,14 +35,6 @@ export const generateUploadKey = async () => {
         return null;
     }
 };
-const isValidIPFSHash = (hash: string): boolean => {
-  if (!hash || typeof hash !== 'string') return false;
-  if (hash.length < 10) return false;
-  if (hash === 'test' || hash === 'dummy' || hash === 'invalid') return false;
-  
-  const cidPattern = /^(Qm[1-9A-HJ-NP-Za-km-z]{44}|bafy[a-z0-9]{50,})$/;
-  return cidPattern.test(hash);
-};
 
 export const getIPFSData = async (hash: string) => {    
     try {

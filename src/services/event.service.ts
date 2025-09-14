@@ -183,7 +183,6 @@ const processEventData = async (
   };
 
   if (eventData.ipfsHash) {
-    console.log('eventipfs', eventData)
     try {
       const eventIpfsData = await getIPFSData(eventData.ipfsHash);
 
@@ -191,7 +190,6 @@ const processEventData = async (
         processedEvent.eventMetadata = eventIpfsData.data as any;
         
         if (processedEvent.eventMetadata && processedEvent.eventMetadata.image) {
-          console.log(processedEvent.eventMetadata.image, 'test')
           try {
             processedEvent.eventImageUrl = await getIPFSImageUrl(processedEvent.eventMetadata.image);
           } catch (imageError) {
