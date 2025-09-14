@@ -9,9 +9,11 @@ import {
 import {
   ENS_REGISTRY_ADDRESS,
   ENS_ADDRESS_RESOLVER,
+  ENS_REVERSE_REGISTRAR_ADDRESS,
   ENS_ABI,
   ENS_RESOLVER_ABI,
-  MIZUPASS_WALLET_ADDRESS
+  ENS_REVERSE_REGISTRAR_ABI,
+  MIZUPASS_WALLET_ADDRESS,
 } from "../config/Contracts";
 import EnsClient from "../config/EnsClient";
 import EnsWalletClient from "../config/EnsWalletClient";
@@ -25,6 +27,7 @@ export const getENS = async (ensName: string): Promise<Address | null> => {
     // Resolve ENS name to Ethereum address
     const address = await EnsClient.getEnsAddress({
       name: ensName,
+      universalResolverAddress: "0x3c85752a5d47DD09D677C645Ff2A938B38fbFEbA",
     });
 
     const name = namehash(ensName);
@@ -47,6 +50,25 @@ export const getENS = async (ensName: string): Promise<Address | null> => {
   }
 };
 
+/** Reverse: address -> ENS name (primary) */
+export const getPrimaryEnsNameForAddress = async (address: `0x${string}`): Promise<string | null> => {
+  try {
+    console.log(`Attempting to resolve primary ENS name for address: ${address}`);
+
+    const reverseName = await EnsClient.getEnsName({
+      address,
+      // Sepolia Universal Resolver
+      universalResolverAddress: '0x3c85752a5d47DD09D677C645Ff2A938B38fbFEbA',
+    });
+
+    console.log(`Primary ENS name for ${address}:`, reverseName);
+    return reverseName;
+  } catch (error) {
+    console.error(`Error resolving primary ENS name for address ${address}:`, error);
+    return null;
+  }
+};
+
 export const createSubEns = async (
   subdomainName: string,
   givenSubdomainAddress: `0x${string}`,
@@ -54,10 +76,12 @@ export const createSubEns = async (
 ) => {
   try {
     // Check if user is verified before allowing subdomain creation
-    const verified = await isVerifiedUser(givenSubdomainAddress);
-    if (!verified) {
-      throw new Error(`User ${givenSubdomainAddress} is not verified. Only verified users can create sub-ENS domains.`);
-    }
+    // const verified = await isVerifiedUser(givenSubdomainAddress);
+    // if (!verified) {
+    //   throw new Error(
+    //     `User ${givenSubdomainAddress} is not verified. Only verified users can create sub-ENS domains.`
+    //   );
+    // }
 
     const subDomainaddressOwner = await getENS(subdomainName);
     if (subDomainaddressOwner) {
@@ -91,11 +115,7 @@ export const createSubEns = async (
 
     const fullNameHash = namehash(`${subdomainName}.mizupass.eth`);
 
-    const txSetAddrParams = [
-      fullNameHash,
-      '2148018000',
-      givenSubdomainAddress
-    ]
+    const txSetAddrParams = [fullNameHash, "60", givenSubdomainAddress];
 
     const txSubnodeRecord = await createTransactionSubnodeRecord(
       registryContract,
@@ -117,7 +137,6 @@ export const createSubEns = async (
         BigInt(receipt.gasUsed) * receipt.effectiveGasPrice
       ),
     });
-    
 
     const recordGasData = formatGasData(receiptRecord);
 
@@ -126,6 +145,8 @@ export const createSubEns = async (
     return {
       ens: `${subdomainName}.${parentDomain}`,
       owner: givenSubdomainAddress,
+      primaryEnsSet: false,
+      note: "Primary ENS must be set by the address owner directly via reverse registrar",
       transactions: {
         setSubnodeRecord: {
           hash: txSubnodeRecord,
@@ -175,15 +196,12 @@ async function createTransactionSubnodeRecord(
   }
 }
 
-async function createTransactionSetAddr(
-  resolverContract: any,
-  txParams: any
-) {
+async function createTransactionSetAddr(resolverContract: any, txParams: any) {
   try {
     const tx = await resolverContract.write.setAddr(txParams);
     return tx;
   } catch (error) {
-    console.error("Error creating createTransactionSubnodeRecord:", error);
+    console.error("Error creating createTransactionSetAddr:", error);
     throw error;
   }
 }

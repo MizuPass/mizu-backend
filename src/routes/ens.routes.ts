@@ -1,5 +1,6 @@
 import { Hono } from "hono";
-import { getENS, createSubEns } from "../services/ens.service";
+import { getENS, createSubEns, getPrimaryEnsNameForAddress } from "../services/ens.service";
+import { isVerifiedUser } from "../services/identity.service";
 
 const ensRoutes = new Hono();
 
@@ -36,17 +37,45 @@ ensRoutes.get("/", async (c) => {
 ensRoutes.get("/checkSubdomain/:subdomain", async (c) => {
   try {
     const subdomain = c.req.param("subdomain");
-    const fullEnsName = `${subdomain}.mizupass.eth`;
+    const addressLookup = c.req.query("address") as `0x${string}` | undefined;
 
-    const resolvedAddress = await getENS(fullEnsName);
+    if (addressLookup) {
+      // Address lookup mode: reverse ENS resolution
+      if (!/^0x[a-fA-F0-9]{40}$/.test(addressLookup)) {
+        return c.json({
+          success: false,
+          error: "Invalid Ethereum address format"
+        }, 400);
+      }
 
-    return c.json({
-      success: true,
-      subdomain: fullEnsName,
-      exists: !!resolvedAddress,
-      resolvedAddress: resolvedAddress || null,
-      isVerified: !!resolvedAddress
-    });
+      const primaryEnsName = await getPrimaryEnsNameForAddress(addressLookup);
+      const isUserVerified = await isVerifiedUser(addressLookup);
+
+      return c.json({
+        success: true,
+        address: addressLookup,
+        primaryEnsName: primaryEnsName,
+        hasPrimaryEns: !!primaryEnsName,
+        isVerified: isUserVerified
+      });
+    } else {
+      // Original subdomain lookup mode
+      const fullEnsName = `${subdomain}.mizupass.eth`;
+      const resolvedAddress = await getENS(fullEnsName);
+
+      let isUserVerified = false;
+      if (resolvedAddress) {
+        isUserVerified = await isVerifiedUser(resolvedAddress);
+      }
+
+      return c.json({
+        success: true,
+        subdomain: fullEnsName,
+        exists: !!resolvedAddress,
+        resolvedAddress: resolvedAddress || null,
+        isVerified: isUserVerified
+      });
+    }
   } catch (error) {
     console.error("Error checking subdomain:", error);
     return c.json({
