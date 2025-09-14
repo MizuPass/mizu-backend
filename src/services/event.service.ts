@@ -8,6 +8,15 @@ import KaiganClient from "../config/KaiganClient";
 import { getIPFSData, getIPFSImageUrl } from "../utils/pinata";
 import { serializeBigInts } from "../utils";
 
+const isValidIPFSHash = (hash: string): boolean => {
+  if (!hash || typeof hash !== 'string') return false;
+  if (hash.length < 10) return false;
+  if (hash === 'test' || hash === 'dummy' || hash === 'invalid') return false;
+  
+  const cidPattern = /^(Qm[1-9A-HJ-NP-Za-km-z]{44}|baf[a-z0-9]{50,})$/;
+  return cidPattern.test(hash);
+};
+
 export interface EventData {
   organizer: Address;
   ipfsHash: string;
@@ -51,8 +60,14 @@ export const getAllActiveEvents = async (): Promise<ProcessedEventData[]> => {
       const eventContract = eventContractAddresses[i];
       const eventData = eventDataArray[i];
 
-      const processedEvent = await processEventData(eventData, eventId, eventContract);
-      processedEvents.push(processedEvent);
+      try {
+        const processedEvent = await processEventData(eventData, eventId, eventContract);
+        if (processedEvent) {
+          processedEvents.push(processedEvent);
+        }
+      } catch (error) {
+        console.error(`Error processing event ${eventId}:`, error);
+      }
     }
 
     return serializeBigInts(processedEvents) as ProcessedEventData[];
@@ -80,8 +95,14 @@ export const getOrganizerActiveEvents = async (organizerAddress: Address): Promi
       const eventContract = eventContractAddresses[i];
       const eventData = eventDataArray[i];
 
-      const processedEvent = await processEventData(eventData, eventId, eventContract);
-      processedEvents.push(processedEvent);
+      try {
+        const processedEvent = await processEventData(eventData, eventId, eventContract);
+        if (processedEvent) {
+          processedEvents.push(processedEvent);
+        }
+      } catch (error) {
+        console.error(`Error processing organizer event ${eventId}:`, error);
+      }
     }
 
     return serializeBigInts(processedEvents) as ProcessedEventData[];
@@ -103,6 +124,9 @@ export const getEventDetails = async (eventId: number): Promise<ProcessedEventDa
     const [eventData, eventContract] = result;
 
     const processedEvent = await processEventData(eventData, eventId, eventContract);
+    if (!processedEvent) {
+      return null;
+    }
     return serializeBigInts(processedEvent) as ProcessedEventData;
   } catch (error) {
     console.error(`Error fetching event details for ID ${eventId}:`, error);
@@ -124,6 +148,10 @@ export const getEventDetailsByContract = async (eventContractAddress: Address): 
 
     const processedEvent = await processEventData(eventData, undefined, eventContractAddress);
     
+    if (!processedEvent) {
+      return null;
+    }
+    
     if (processedEvent.eventMetadata) {
       processedEvent.eventMetadata.name = eventName;
       processedEvent.eventMetadata.symbol = eventSymbol;
@@ -140,7 +168,17 @@ const processEventData = async (
   eventData: EventData, 
   eventId?: number, 
   eventContract?: Address
-): Promise<ProcessedEventData> => {
+): Promise<ProcessedEventData | null> => {
+  // Temporarily disable validation to test IPFS data fetching
+  // const hasValidEventHash = !eventData.ipfsHash || isValidIPFSHash(eventData.ipfsHash);
+  // const hasValidTicketHash = !eventData.ticketIpfsHash || isValidIPFSHash(eventData.ticketIpfsHash);
+  
+  
+  // if (!hasValidEventHash || !hasValidTicketHash) {
+  //   console.warn(`Skipping event ${eventId} due to invalid IPFS hashes - event: ${eventData.ipfsHash}, ticket: ${eventData.ticketIpfsHash}`);
+  //   return null;
+  // }
+
   const processedEvent: ProcessedEventData = {
     ...eventData,
     eventId,
@@ -150,11 +188,16 @@ const processEventData = async (
   if (eventData.ipfsHash) {
     try {
       const eventIpfsData = await getIPFSData(eventData.ipfsHash);
+      
       if (eventIpfsData && eventIpfsData.data) {
         processedEvent.eventMetadata = eventIpfsData.data as any;
         
         if (processedEvent.eventMetadata && processedEvent.eventMetadata.image) {
-          processedEvent.eventImageUrl = await getIPFSImageUrl(processedEvent.eventMetadata.image);
+          try {
+            processedEvent.eventImageUrl = await getIPFSImageUrl(processedEvent.eventMetadata.image);
+          } catch (imageError) {
+            console.error(`Error processing event image for hash ${eventData.ipfsHash}:`, imageError);
+          }
         }
       }
     } catch (error) {
@@ -169,7 +212,11 @@ const processEventData = async (
         processedEvent.ticketMetadata = ticketIpfsData.data as any;
         
         if (processedEvent.ticketMetadata && processedEvent.ticketMetadata.image) {
-          processedEvent.ticketImageUrl = await getIPFSImageUrl(processedEvent.ticketMetadata.image);
+          try {
+            processedEvent.ticketImageUrl = await getIPFSImageUrl(processedEvent.ticketMetadata.image);
+          } catch (imageError) {
+            console.error(`Error processing ticket image for hash ${eventData.ticketIpfsHash}:`, imageError);
+          }
         }
       }
     } catch (error) {
@@ -177,5 +224,12 @@ const processEventData = async (
     }
   }
 
+  console.log(`🔍 [DEBUG] Final processed event ${eventId}:`, {
+    eventImageUrl: processedEvent.eventImageUrl,
+    ticketImageUrl: processedEvent.ticketImageUrl,
+    hasEventMetadata: !!processedEvent.eventMetadata,
+    hasTicketMetadata: !!processedEvent.ticketMetadata
+  });
+  
   return processedEvent;
 };
