@@ -6,6 +6,7 @@ import {
 } from "../config/Contracts";
 import KaiganClient from "../config/KaiganClient";
 import { getIPFSData, getIPFSImageUrl } from "../utils/pinata";
+import { serializeBigInts } from "../utils";
 
 export interface EventData {
   organizer: Address;
@@ -54,7 +55,7 @@ export const getAllActiveEvents = async (): Promise<ProcessedEventData[]> => {
       processedEvents.push(processedEvent);
     }
 
-    return processedEvents;
+    return serializeBigInts(processedEvents) as ProcessedEventData[];
   } catch (error) {
     console.error("Error fetching all active events:", error);
     throw error;
@@ -83,7 +84,7 @@ export const getOrganizerActiveEvents = async (organizerAddress: Address): Promi
       processedEvents.push(processedEvent);
     }
 
-    return processedEvents;
+    return serializeBigInts(processedEvents) as ProcessedEventData[];
   } catch (error) {
     console.error("Error fetching organizer active events:", error);
     throw error;
@@ -101,7 +102,8 @@ export const getEventDetails = async (eventId: number): Promise<ProcessedEventDa
     const result = await contract.read.getEventDetails([BigInt(eventId)]) as [EventData, Address];
     const [eventData, eventContract] = result;
 
-    return await processEventData(eventData, eventId, eventContract);
+    const processedEvent = await processEventData(eventData, eventId, eventContract);
+    return serializeBigInts(processedEvent) as ProcessedEventData;
   } catch (error) {
     console.error(`Error fetching event details for ID ${eventId}:`, error);
     throw error;
@@ -127,7 +129,7 @@ export const getEventDetailsByContract = async (eventContractAddress: Address): 
       processedEvent.eventMetadata.symbol = eventSymbol;
     }
 
-    return processedEvent;
+    return serializeBigInts(processedEvent) as ProcessedEventData;
   } catch (error) {
     console.error(`Error fetching event details for contract ${eventContractAddress}:`, error);
     throw error;
