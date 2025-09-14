@@ -1,12 +1,12 @@
 import { Address, getContract } from "viem";
-import { MIZUPASS_IDENTITY_ADDRESS, MIZUPASS_ABI } from "../config/Contracts";
+import { MIZUPASS_IDENTITY_ADDRESS, MIZUPASS_IDENTITY_ABI } from "../config/Contracts";
 import KaiganClient from "../config/KaiganClient";
 
 export const isVerifiedUser = async (userAddress: Address): Promise<boolean> => {
   try {
     const contract = getContract({
       address: MIZUPASS_IDENTITY_ADDRESS,
-      abi: MIZUPASS_ABI,
+      abi: MIZUPASS_IDENTITY_ABI,
       client: KaiganClient,
     });
     console.log("Checking verification for contract:", contract);
@@ -24,7 +24,7 @@ export const isZKPassportVerified = async (userAddress: Address): Promise<boolea
   try {
     const contract = getContract({
       address: MIZUPASS_IDENTITY_ADDRESS,
-      abi: MIZUPASS_ABI,
+      abi: MIZUPASS_IDENTITY_ABI,
       client: KaiganClient,
     });
 
@@ -41,7 +41,7 @@ export const verifyMizuhikiSBT = async (userAddress: Address): Promise<boolean> 
   try {
     const contract = getContract({
       address: MIZUPASS_IDENTITY_ADDRESS,
-      abi: MIZUPASS_ABI,
+      abi: MIZUPASS_IDENTITY_ABI,
       client: KaiganClient,
     });
 
