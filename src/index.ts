@@ -2,6 +2,8 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { zkpassportRoutes } from "./routes/zkpassport.routes";
+import { ensRoutes } from "./routes/ens.routes";
+import identityRouter from "./routes/identity.routes";
 
 const app = new Hono();
 
@@ -20,6 +22,8 @@ app.get("/health", (c) => {
 
 // Routes
 app.route("/api/zkpassport", zkpassportRoutes);
+app.route("/api/ens", ensRoutes);
+app.route("/api/identity", identityRouter);
 
 // 404 handler
 app.notFound((c) => {
