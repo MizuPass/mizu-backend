@@ -60,12 +60,10 @@ export const getIPFSData = async (hash: string) => {
 }
 
 export const getIPFSImageUrl = async (hash: string) => {
-    // If it's already a full URL, return as is
     if (hash.startsWith('http')) {
         return hash;
     }
     
-    // Otherwise, prepend the gateway URL
     return `https://gateway.pinata.cloud/ipfs/${hash}`;
 }
 

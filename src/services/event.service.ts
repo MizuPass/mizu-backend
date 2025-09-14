@@ -8,15 +8,6 @@ import KaiganClient from "../config/KaiganClient";
 import { getIPFSData, getIPFSImageUrl } from "../utils/pinata";
 import { serializeBigInts } from "../utils";
 
-const isValidIPFSHash = (hash: string): boolean => {
-  if (!hash || typeof hash !== 'string') return false;
-  if (hash.length < 10) return false;
-  if (hash === 'test' || hash === 'dummy' || hash === 'invalid') return false;
-  
-  const cidPattern = /^(Qm[1-9A-HJ-NP-Za-km-z]{44}|baf[a-z0-9]{50,})$/;
-  return cidPattern.test(hash);
-};
-
 export interface EventData {
   organizer: Address;
   ipfsHash: string;
@@ -169,6 +160,12 @@ const processEventData = async (
   eventId?: number, 
   eventContract?: Address
 ): Promise<ProcessedEventData | null> => {
+  // Filter out test events
+  if (eventData.ipfsHash === 'test') {
+    console.warn(`Skipping test event ${eventId} with ipfsHash: ${eventData.ipfsHash}`);
+    return null;
+  }
+
   // Temporarily disable validation to test IPFS data fetching
   // const hasValidEventHash = !eventData.ipfsHash || isValidIPFSHash(eventData.ipfsHash);
   // const hasValidTicketHash = !eventData.ticketIpfsHash || isValidIPFSHash(eventData.ticketIpfsHash);
@@ -193,6 +190,7 @@ const processEventData = async (
         processedEvent.eventMetadata = eventIpfsData.data as any;
         
         if (processedEvent.eventMetadata && processedEvent.eventMetadata.image) {
+          console.log(processedEvent.eventMetadata.image, 'test')
           try {
             processedEvent.eventImageUrl = await getIPFSImageUrl(processedEvent.eventMetadata.image);
           } catch (imageError) {
