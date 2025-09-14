@@ -16,6 +16,7 @@ import {
 import EnsClient from "../config/EnsClient";
 import EnsWalletClient from "../config/EnsWalletClient";
 import { ethers } from "ethers";
+import { isVerifiedUser } from "./identity.service";
 
 export const getENS = async (ensName: string): Promise<Address | null> => {
   try {
@@ -52,6 +53,12 @@ export const createSubEns = async (
   parentDomain: string = "mizupass.eth"
 ) => {
   try {
+    // Check if user is verified before allowing subdomain creation
+    const verified = await isVerifiedUser(givenSubdomainAddress);
+    if (!verified) {
+      throw new Error(`User ${givenSubdomainAddress} is not verified. Only verified users can create sub-ENS domains.`);
+    }
+
     const subDomainaddressOwner = await getENS(subdomainName);
     if (subDomainaddressOwner) {
       throw new Error(`Subdomain ${subdomainName} already exists`);
