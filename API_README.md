@@ -400,11 +400,8 @@ Upload JSON data to IPFS.
   "data": {
     "ipfsHash": "QmHash...",
     "ipfsUrl": "https://gateway.pinata.cloud/ipfs/QmHash...",
-    "pinataData": {
-      "IpfsHash": "QmHash...",
-      "PinSize": 12345,
-      "Timestamp": "2024-01-01T00:00:00.000Z"
-    }
+    "ipfsHashTicket": "QmHash...",
+    "ipfsUrlTicket": "https://gateway.pinata.cloud/ipfs/QmHash...",
   }
 }
 ```

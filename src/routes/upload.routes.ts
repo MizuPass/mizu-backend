@@ -51,7 +51,8 @@ uploadRouter.post("/json", async (c) => {
       data: {
         ipfsHash: result.ipfsHash,
         ipfsUrl: result.ipfsUrl,
-        pinataData: result.data
+        ipfsHashTicket: result.ipfsHashTicket,
+        ipfsUrlTicket: result.ipfsUrlTicket,
       }
     });
   } catch (error) {
