@@ -183,9 +183,10 @@ const processEventData = async (
   };
 
   if (eventData.ipfsHash) {
+    console.log('eventipfs', eventData)
     try {
       const eventIpfsData = await getIPFSData(eventData.ipfsHash);
-      
+
       if (eventIpfsData && eventIpfsData.data) {
         processedEvent.eventMetadata = eventIpfsData.data as any;
         

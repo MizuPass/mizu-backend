@@ -44,12 +44,7 @@ const isValidIPFSHash = (hash: string): boolean => {
   return cidPattern.test(hash);
 };
 
-export const getIPFSData = async (hash: string) => {
-    if (!isValidIPFSHash(hash)) {
-      console.warn(`Invalid IPFS hash detected: "${hash}" - skipping Pinata call`);
-      return null;
-    }
-    
+export const getIPFSData = async (hash: string) => {    
     try {
       const result = await pinataClient.gateways.get(hash)
       return result
