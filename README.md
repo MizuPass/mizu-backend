@@ -1,20 +1,19 @@
-# 🎟️ MizuPass Backend - ETH Tokyo 2025 Hackathon
+# 🎟️ MizuPass Backend - VietBUIDL Hackathon
 
 > **Privacy-First Universal Ticketing Platform**
-> Compliant, privacy-preserving ticketing with seamless JETH-to-MJPY payments and universal KYC verification
+> Compliant, privacy-preserving ticketing with seamless U2U-to-pUSDT payments and universal KYC verification
 
-## 🏆 Hackathon Tracks
-- 🥷 **Cypherpunks Anonymous** (Privacy & Security) - 60%
-- ✊ **Counterculture Capital** (Financial Innovation) - 40%
+## 🏆 Hackathon Track
+- 🚀 **User Application Track** (DeFi/SocialFi/RWA) - VietBUIDL Hackathon
 
 ## 🚀 What is MizuPass?
 
 MizuPass bridges the gap between regulatory compliance and user privacy by creating the first ticketing platform that:
 
-✅ **Universal KYC**: Mizuhiki ID (Japanese) + ZK Passport (International)
+✅ **Universal KYC**: ZK Passport (International) verification
 ✅ **Private Payments**: Stealth addresses + ZK payment proofs
-✅ **DEX Integration**: Direct JETH payments via Uniswap v3
-✅ **Full Compliance**: Japanese regulatory adherence with privacy
+✅ **DEX Integration**: Direct U2U payments with pUSDT/USDT
+✅ **Privacy-First**: Vietnamese market focus with global privacy standards
 
 ## 🔧 Quick Start
 
@@ -80,15 +79,15 @@ curl http://localhost:3000/health
 - **Selective Disclosure**: Minimal data exposure for compliance
 
 ### Financial Innovation
-- **Cross-Border Seamless**: Same UX for Japanese + international users
-- **Auto-Currency Swap**: JETH → MJPY via Uniswap v3 integration
+- **Cross-Border Seamless**: Same UX for Vietnamese + international users
+- **Auto-Currency Swap**: U2U → pUSDT via DEX integration
 - **Sub-3% Fees**: Revolutionary cost reduction vs traditional platforms
 - **Smart Resale Controls**: Programmable ticket resale with price caps
 
 ## 🏗️ Architecture Integration
 
 ```
-Frontend → ZKPassport Backend → Smart Contracts → JSC Kaigan
+Frontend → ZKPassport Backend → Smart Contracts → U2U Network
     ↓              ↓                    ↓
 Privacy UX → Identity Verify → On-Chain Registration → Ticket Purchase
 ```
@@ -96,20 +95,20 @@ Privacy UX → Identity Verify → On-Chain Registration → Ticket Purchase
 ## 📊 Demo Metrics
 
 - **Verification Speed**: < 30 seconds end-to-end
-- **Payment Flow**: JETH → MJPY automatic conversion
+- **Payment Flow**: U2U → pUSDT automatic conversion
 - **Privacy Level**: Zero transaction correlation possible
-- **Compliance**: 100% Japanese regulatory adherent
+- **Compliance**: Vietnamese market privacy standards
 
 ## 🎪 Next Steps
 
 1. **Smart Contract Integration**: Connect with deployed MizuPassIdentity contract
 2. **Mobile PWA**: Offline-capable ticket management
-3. **Event Partnerships**: Tokyo 2025+ event organizer onboarding
+3. **Event Partnerships**: Vietnamese event organizer onboarding
 4. **Advanced Privacy**: Enhanced stealth address system
 
 ---
 
-**Built for ETH Tokyo 2025 Hackathon**
+**Built for VietBUIDL Hackathon**
 *Revolutionizing event ticketing with privacy, compliance, and seamless Web3 UX*
 
 🔗 **Smart Contracts**: `../mizu-contracts/`
