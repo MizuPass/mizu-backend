@@ -7,6 +7,7 @@ import identityRouter from "./routes/identity.routes";
 import eventRouter from "./routes/event.routes";
 import uploadRouter from "./routes/upload.routes";
 import stealthPaymentRouter from "./routes/stealthPayment.routes";
+import ticketRouter from "./routes/ticket.routes";
 import { eventListenerService } from "./services/eventListener.service";
 
 const app = new Hono();
@@ -31,6 +32,7 @@ app.route("/api/identity", identityRouter);
 app.route("/api/events", eventRouter);
 app.route("/api/upload", uploadRouter);
 app.route("/api/stealth-payments", stealthPaymentRouter);
+app.route("/api/tickets", ticketRouter);
 
 // 404 handler
 app.notFound((c) => {
