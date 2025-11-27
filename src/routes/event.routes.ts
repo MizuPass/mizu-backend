@@ -10,18 +10,23 @@ const eventRouter = new Hono();
 
 eventRouter.get("/active", async (c) => {
   try {
+    console.log('[EventRouter] Fetching all active events...');
     const events = await getAllActiveEvents();
-    
-    return c.json({
+    console.log(`[EventRouter] Got ${events.length} events, preparing response...`);
+
+    const response = {
       success: true,
       data: events,
       count: events.length
-    });
+    };
+
+    console.log('[EventRouter] Sending response...');
+    return c.json(response);
   } catch (error) {
-    console.error("Error fetching all active events:", error);
-    return c.json({ 
+    console.error("[EventRouter] Error fetching all active events:", error);
+    return c.json({
       success: false,
-      error: "Failed to fetch active events" 
+      error: "Failed to fetch active events"
     }, 500);
   }
 });

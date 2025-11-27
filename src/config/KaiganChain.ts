@@ -23,13 +23,39 @@ export const u2uTestnet = defineChain({
   testnet: true,
 })
 
+export const mantleSepolia = defineChain({
+  id: 5003,
+  name: 'Mantle Sepolia Testnet',
+  nativeCurrency: {
+    decimals: 18,
+    name: 'Sepolia Mantle',
+    symbol: 'MNT',
+  },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.sepolia.mantle.xyz'],
+      webSocket: ['wss://mantle-sepolia.drpc.org'],
+    },
+    public: {
+      http: ['https://rpc.sepolia.mantle.xyz'],
+    },
+  },
+  blockExplorers: {
+    default: {
+      name: 'Mantle Sepolia Explorer',
+      url: 'https://explorer.sepolia.mantle.xyz'
+    },
+  },
+  testnet: true,
+})
+
 export const u2uMainnet = defineChain({
   id: 39,
-  name: 'U2U Network Solaris',
-  nativeCurrency: { 
-    name: 'U2U', 
-    symbol: 'U2U', 
-    decimals: 18 
+  name: 'U2U Solaris Mainnet',
+  nativeCurrency: {
+    name: 'U2U',
+    symbol: 'U2U',
+    decimals: 18
   },
   rpcUrls: {
     default: {
@@ -45,12 +71,12 @@ export const u2uMainnet = defineChain({
     },
   },
   blockExplorers: {
-    default: { 
-      name: 'U2U Scan', 
-      url: 'https://u2uscan.xyz' 
+    default: {
+      name: 'U2U Scan',
+      url: 'https://u2uscan.xyz'
     },
   },
 })
 
 // Export mainnet as default for production
-export const kaigan = u2uMainnet
+export const kaigan = mantleSepolia

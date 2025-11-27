@@ -1,7 +1,7 @@
 # 🎟️ MizuPass Backend - VietBUIDL Hackathon
 
 > **Privacy-First Universal Ticketing Platform**
-> Compliant, privacy-preserving ticketing with seamless U2U-to-pUSDT payments and universal KYC verification
+> Compliant, privacy-preserving ticketing with seamless Mantle-to-USDC payments and universal KYC verification
 
 ## 🏆 Hackathon Track
 - 🚀 **User Application Track** (DeFi/SocialFi/RWA) - VietBUIDL Hackathon
@@ -12,7 +12,7 @@ MizuPass bridges the gap between regulatory compliance and user privacy by creat
 
 ✅ **Universal KYC**: ZK Passport (International) verification
 ✅ **Private Payments**: Stealth addresses + ZK payment proofs
-✅ **DEX Integration**: Direct U2U payments with pUSDT/USDT
+✅ **DEX Integration**: Direct U2U payments with USDC
 ✅ **Privacy-First**: Vietnamese market focus with global privacy standards
 
 ## 🔧 Quick Start
@@ -80,7 +80,7 @@ curl http://localhost:3000/health
 
 ### Financial Innovation
 - **Cross-Border Seamless**: Same UX for Vietnamese + international users
-- **Auto-Currency Swap**: U2U → pUSDT via DEX integration
+- **Auto-Currency Swap**: Mantle → USDC via DEX integration
 - **Sub-3% Fees**: Revolutionary cost reduction vs traditional platforms
 - **Smart Resale Controls**: Programmable ticket resale with price caps
 
@@ -95,7 +95,7 @@ Privacy UX → Identity Verify → On-Chain Registration → Ticket Purchase
 ## 📊 Demo Metrics
 
 - **Verification Speed**: < 30 seconds end-to-end
-- **Payment Flow**: U2U → pUSDT automatic conversion
+- **Payment Flow**: Mantle → USDC automatic conversion
 - **Privacy Level**: Zero transaction correlation possible
 - **Compliance**: Vietnamese market privacy standards
 

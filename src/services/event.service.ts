@@ -8,6 +8,56 @@ import KaiganClient from "../config/KaiganClient";
 import { getIPFSData, getIPFSImageUrl } from "../utils/pinata";
 import { serializeBigInts } from "../utils";
 
+// Simple in-memory cache for IPFS data
+const ipfsCache = new Map<string, any>();
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+
+interface CacheEntry {
+  data: any;
+  timestamp: number;
+}
+
+const getCachedIPFSData = async (hash: string): Promise<any> => {
+  const cached = ipfsCache.get(hash) as CacheEntry;
+  const now = Date.now();
+  
+  if (cached && (now - cached.timestamp) < CACHE_DURATION) {
+    console.log(`📦 Cache hit for IPFS hash: ${hash}`);
+    return cached.data;
+  }
+  
+  console.log(`🔄 Cache miss for IPFS hash: ${hash}, fetching from IPFS...`);
+  const data = await getIPFSData(hash);
+  
+  ipfsCache.set(hash, {
+    data,
+    timestamp: now
+  });
+  
+  return data;
+};
+
+const getCachedIPFSImageUrl = async (imageHash: string): Promise<string> => {
+  const cacheKey = `image_${imageHash}`;
+  const cached = ipfsCache.get(cacheKey) as CacheEntry;
+  const now = Date.now();
+  
+  if (cached && (now - cached.timestamp) < CACHE_DURATION) {
+    console.log(`📦 Cache hit for IPFS image: ${imageHash}`);
+    return cached.data;
+  }
+  
+  console.log(`🔄 Cache miss for IPFS image: ${imageHash}, fetching from IPFS...`);
+  const url = await getIPFSImageUrl(imageHash);
+  
+  ipfsCache.set(cacheKey, {
+    data: url,
+    timestamp: now
+  });
+  
+  return url;
+};
+
 export interface EventData {
   organizer: Address;
   ipfsHash: string;
@@ -184,14 +234,14 @@ const processEventData = async (
 
   if (eventData.ipfsHash) {
     try {
-      const eventIpfsData = await getIPFSData(eventData.ipfsHash);
+      const eventIpfsData = await getCachedIPFSData(eventData.ipfsHash);
 
       if (eventIpfsData && eventIpfsData.data) {
         processedEvent.eventMetadata = eventIpfsData.data as any;
         
         if (processedEvent.eventMetadata && processedEvent.eventMetadata.image) {
           try {
-            processedEvent.eventImageUrl = await getIPFSImageUrl(processedEvent.eventMetadata.image);
+            processedEvent.eventImageUrl = await getCachedIPFSImageUrl(processedEvent.eventMetadata.image);
           } catch (imageError) {
             console.error(`Error processing event image for hash ${eventData.ipfsHash}:`, imageError);
           }
@@ -204,13 +254,13 @@ const processEventData = async (
 
   if (eventData.ticketIpfsHash) {
     try {
-      const ticketIpfsData = await getIPFSData(eventData.ticketIpfsHash);
+      const ticketIpfsData = await getCachedIPFSData(eventData.ticketIpfsHash);
       if (ticketIpfsData && ticketIpfsData.data) {
         processedEvent.ticketMetadata = ticketIpfsData.data as any;
         
         if (processedEvent.ticketMetadata && processedEvent.ticketMetadata.image) {
           try {
-            processedEvent.ticketImageUrl = await getIPFSImageUrl(processedEvent.ticketMetadata.image);
+            processedEvent.ticketImageUrl = await getCachedIPFSImageUrl(processedEvent.ticketMetadata.image);
           } catch (imageError) {
             console.error(`Error processing ticket image for hash ${eventData.ticketIpfsHash}:`, imageError);
           }
