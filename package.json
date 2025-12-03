@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.86.0",
-    "@zkpassport/sdk": "0.8.3",
+    "@zkpassport/sdk": "^0.12.4",
     "dotenv": "^17.2.2",
     "hono": "^4.0.0",
     "pinata-web3": "^0.5.4",
